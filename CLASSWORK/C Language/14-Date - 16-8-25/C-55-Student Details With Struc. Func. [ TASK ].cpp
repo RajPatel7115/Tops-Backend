@@ -36,7 +36,6 @@ main()
 		int choice;
 		printf("\n1. Enter Student\n");
 		printf("2. Show Student\n");
-		printf("3. Search Student By RollNo\n");
 		printf("Enter Your Choice : ");
 		scanf("%d",&choice);
 
@@ -75,32 +74,6 @@ main()
 				printf("RollNo %d\n",s[j].rollno);
 				printf("Name %s\n",s[j].name);
 				printf("City %s\n",s[j].city);
-			}
-		}
-		else if(choice==3)
-		{
-			int searchRoll;
-			int found = 0;
-
-			printf("\nEnter RollNo To Search : ");
-			scanf("%d",&searchRoll);
-
-			for(int j=0;j<total;j++)
-			{
-				if(s[j].rollno == searchRoll)
-				{
-					printf("\nStudent Found :\n");
-					printf("RollNo %d\n",s[j].rollno);
-					printf("Name %s\n",s[j].name);
-					printf("City %s\n",s[j].city);
-					found = 1;
-					break;
-				}
-			}
-
-			if(found == 0)
-			{
-				printf("\nStudent With RollNo %d Not Found.\n",searchRoll);
 			}
 		}
 	}
