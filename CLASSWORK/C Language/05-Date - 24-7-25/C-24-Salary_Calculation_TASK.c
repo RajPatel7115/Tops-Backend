@@ -1,5 +1,5 @@
 #include<stdio.h>
-main() 
+int main() 
 {
     int basic, da, hra, gross, tax, net;
 

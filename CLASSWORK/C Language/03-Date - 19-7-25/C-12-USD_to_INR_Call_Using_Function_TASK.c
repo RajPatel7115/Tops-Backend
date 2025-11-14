@@ -1,5 +1,5 @@
 #include<stdio.h>
-currency()
+int currency()
 {
 	int dollor;
 	int rate = 85;
@@ -13,7 +13,7 @@ currency()
 	printf("%d Dollor to INR is : %d",dollor,inr);
 }
 
-main()
+int main()
 {
 	currency();
 }
