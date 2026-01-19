@@ -35,7 +35,7 @@ class Bank:
             else:
                 print("Entered Pass Is Wrong")
         else:
-            print("Entered Account Number is Wrong")
+            print("Entered Account Number Is Wrong")
 
     def ac_withdraw(self):
 
