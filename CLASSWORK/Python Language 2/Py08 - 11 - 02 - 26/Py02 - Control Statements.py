@@ -4,7 +4,7 @@
 
 # 1) break - Stops Loop Immediately 
 # 2) continue - skips the particular Condition
-# 3) pass - future coding
+# 3) pass - future coding PY
 
 for i in range(1,11):
     print(i)
