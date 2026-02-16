@@ -1,0 +1,16 @@
+Function : Block of code that we can use it again and again
+
+2) Types
+
+1 - Built In - print, input, range etc.
+
+2 - user defined
+4) Types
+1 - Function without parameters without return type - default Function
+
+3) Steps 
+
+1 - definition 
+2 - call  -  access
+
+
