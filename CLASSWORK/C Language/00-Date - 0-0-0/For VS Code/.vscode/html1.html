@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeoBank Pro+</title>
+<style>
+:root{--bg:#0b1220;--card:#131f3b;--primary:#4f9cff;--text:#e8efff;--muted:#9fb0d0}
+.light{--bg:#eef2ff;--card:#ffffff;--text:#111}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui;background:var(--bg);color:var(--text)}
+.app{max-width:420px;margin:auto;min-height:100vh}
+header{padding:16px;font-weight:700;font-size:22px;display:flex;justify-content:space-between}
+.card{background:var(--card);border-radius:22px;padding:16px;margin:12px}
+.balance{font-size:34px;font-weight:800}
+button,input{width:100%;padding:12px;border-radius:16px;border:none;margin-top:8px}
+button{background:var(--primary);color:white}
+nav{position:fixed;bottom:0;left:0;right:0;max-width:420px;margin:auto;background:#101a33;display:flex;justify-content:space-around;padding:10px 0}
+nav div{color:var(--muted);cursor:pointer}
+nav .active{color:var(--primary)}
+.hidden{display:none}
+.lock{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center}
+.pin{background:#131f3b;padding:20px;border-radius:20px;text-align:center}
+canvas{background:#fff;border-radius:10px}
+</style>
+</head>
+<body>
+<div class="lock" id="lock">
+ <div class="pin">
+  <h3>Enter PIN</h3>
+  <input id="pinInput" type="password" maxlength="4" />
+  <button onclick="unlock()">Unlock</button>
+  <button onclick="setPin()">Set New PIN</button>
+ </div>
+</div>
+
+<div class="app">
+<header>NeoBank <span onclick="toggleTheme()">🌗</span></header>
+
+<div id="home">
+ <div class="card"><div>Balance</div><div class="balance">₹ <span id="bal">0</span></div></div>
+ <div class="card"><button onclick="openDeposit()">Deposit</button><button onclick="openTransfer()">Transfer</button></div>
+ <div class="card"><canvas id="chart" width="300" height="120"></canvas></div>
+</div>
+
+<div id="profile" class="hidden">
+ <div class="card">
+  <h3>Profile</h3>
+  <div id="pname"></div>
+  <div id="pac"></div>
+  <div id="upi"></div>
+ </div>
+ <div class="card">
+  <h3>Your QR</h3>
+  <canvas id="qr" width="200" height="200"></canvas>
+ </div>
+</div>
+
+<div id="pay" class="hidden">
+ <div class="card">
+  <input id="amt" placeholder="Amount" />
+  <button onclick="deposit()">Add Money</button>
+ </div>
+</div>
+
+<div id="transfer" class="hidden">
+ <div class="card">
+  <input id="to" placeholder="Receiver AC/UPI" />
+  <input id="tamt" placeholder="Amount" />
+  <button onclick="transfer()">Send</button>
+ </div>
+</div>
+
+<nav>
+ <div onclick="tab('home')">Home</div>
+ <div onclick="tab('profile')">Profile</div>
+ <div onclick="tab('pay')">Add</div>
+</nav>
+</div>
+
+<script>
+let db=JSON.parse(localStorage.getItem('bank')||"{}");
+let current=localStorage.getItem('session')||'100001';
+if(!db[current])db[current]={name:'Raj',balance:0,history:[]};
+function save(){localStorage.setItem('bank',JSON.stringify(db));localStorage.setItem('session',current)}
+function tab(id){document.querySelectorAll('.app>div').forEach(d=>d.classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function load(){bal.innerText=db[current].balance;pname.innerText='Name: '+db[current].name;pac.innerText='AC: '+current;upi.innerText='UPI: '+current+'@neo';drawQR();drawChart()}
+function deposit(){let a=parseInt(amt.value);if(a>0){db[current].balance+=a;db[current].history.push(a);save();load()}}
+function transfer(){let toid=to.value.split('@')[0];let a=parseInt(tamt.value);if(db[toid]&&a<=db[current].balance){db[current].balance-=a;db[toid].balance+=a;db[current].history.push(-a);save();load()}}
+function openDeposit(){tab('pay')}
+function openTransfer(){tab('transfer')}
+function drawChart(){let c=chart.getContext('2d');c.clearRect(0,0,300,120);let h=db[current].history.slice(-10);h.forEach((v,i)=

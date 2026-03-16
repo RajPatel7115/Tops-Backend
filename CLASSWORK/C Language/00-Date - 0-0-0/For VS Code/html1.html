@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OneUI Password Generator</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+body{
+font-family: "SamsungOne", "Segoe UI", sans-serif;
+background:#f6f7fb;
+margin:0;
+padding:20px;
+}
+
+.header{
+font-size:26px;
+font-weight:700;
+margin-bottom:20px;
+}
+
+.card{
+background:white;
+border-radius:28px;
+padding:25px;
+box-shadow:0 8px 25px rgba(0,0,0,0.08);
+margin-bottom:20px;
+}
+
+.label{
+font-size:14px;
+color:#666;
+margin-bottom:5px;
+}
+
+.slider{
+width:100%;
+}
+
+.passwordBox{
+display:flex;
+margin-top:10px;
+}
+
+.passwordBox input{
+flex:1;
+padding:14px;
+font-size:16px;
+border-radius:16px 0 0 16px;
+border:1px solid #ddd;
+outline:none;
+}
+
+.passwordBox button{
+background:#0b57d0;
+color:white;
+border:none;
+padding:14px 18px;
+border-radius:0 16px 16px 0;
+cursor:pointer;
+}
+
+.generate{
+width:100%;
+margin-top:15px;
+padding:16px;
+border:none;
+border-radius:18px;
+background:#0b57d0;
+color:white;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+}
+
+.generate:hover{
+background:#0947a5;
+}
+
+.strength{
+margin-top:10px;
+font-size:14px;
+}
+
+.saved{
+margin-top:10px;
+max-height:200px;
+overflow:auto;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+padding:10px;
+border-radius:12px;
+background:#f3f4f8;
+margin-bottom:8px;
+font-size:13px;
+}
+
+.delete{
+background:#ff4d4d;
+border:none;
+color:white;
+padding:5px 10px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.export{
+width:100%;
+padding:14px;
+border:none;
+border-radius:18px;
+background:#22c55e;
+color:white;
+font-weight:600;
+cursor:pointer;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">Password Manager</div>
+
+<div class="card">
+
+<div class="label">
+Password Length: <span id="lengthValue">12</span>
+</div>
+
+<input type="range" min="4" max="40" value="12" class="slider" id="slider">
+
+<div class="passwordBox">
+<input id="password" readonly>
+<button onclick="copyPass()">Copy</button>
+</div>
+
+<button class="generate" onclick="generatePassword()">Generate Password</button>
+
+<div class="strength" id="strength"></div>
+
+</div>
+
+<div class="card">
+
+<div class="label">Saved Passwords</div>
+
+<div class="saved" id="saved"></div>
+
+<button class="export" onclick="exportPasswords()">Export Passwords</button>
+
+</div>
+
+<script>
+
+const slider=document.getElementById("slider")
+const lengthValue=document.getElementById("lengthValue")
+
+slider.oninput=()=>{
+lengthValue.innerText=slider.value
+}
+
+function generatePassword(){
+
+let length=slider.value
+
+let chars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()"
+
+let pass=""
+
+for(let i=0;i<length;i++){
+
+pass+=chars[Math.floor(Math.random()*chars.length)]
+
+}
+
+document.getElementById("password").value=pass
+
+checkStrength(pass)
+
+savePassword(pass)
+
+showPasswords()
+
+}
+
+function checkStrength(p){
+
+let s="Weak"
+
+if(p.length>10) s="Medium"
+if(p.length>16) s="Strong"
+
+document.getElementById("strength").innerText="Strength: "+s
+
+}
+
+function copyPass(){
+
+let p=document.getElementById("password")
+
+p.select()
+
+document.execCommand("copy")
+
+alert("Password Copied")
+
+}
+
+function savePassword(pass){
+
+let data=JSON.parse(localStorage.getItem("passwords"))||[]
+
+data.push({
+time:new Date().toLocaleString(),
+pass:pass
+})
+
+localStorage.setItem("passwords",JSON.stringify(data))
+
+}
+
+function showPasswords(){
+
+let data=JSON.parse(localStorage.getItem("passwords"))||[]
+
+let html=""
+
+data.slice().reverse().forEach((p,i)=>{
+
+html+=`
+<div class="row">
+<span>${p.time} : ${p.pass}</span>
+<button class="delete" onclick="deletePass(${i})">X</button>
+</div>
+`
+
+})
+
+document.getElementById("saved").innerHTML=html
+
+}
+
+function deletePass(i){
+
+let data=JSON.parse(localStorage.getItem("passwords"))
+
+data.splice(i,1)
+
+localStorage.setItem("passwords",JSON.stringify(data))
+
+showPasswords()
+
+}
+
+function exportPasswords(){
+
+let data=JSON.parse(localStorage.getItem("passwords"))||[]
+
+let text="Saved Passwords\n\n"
+
+data.forEach(p=>{
+text+=p.time+" : "+p.pass+"\n"
+})
+
+let blob=new Blob([text],{type:"text/plain"})
+
+let a=document.createElement("a")
+
+a.href=URL.createObjectURL(blob)
+
+a.download="passwords.txt"
+
+a.click()
+
+}
+
+showPasswords()
+
+</script>
+
+</body>
+</html>

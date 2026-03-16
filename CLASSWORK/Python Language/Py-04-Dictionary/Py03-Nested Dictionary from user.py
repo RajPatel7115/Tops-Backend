@@ -2,7 +2,7 @@ d = {}
 
 n = int(input("Enter Number :"))
 
-for i in range(i,n+1):
+for i in range(1,n+1):
     d[i]={'square':i*i,'cube':i*i*i}
 
 print(d)

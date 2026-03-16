@@ -5,12 +5,8 @@ dup = []
 for i in l:
     if i not in uni:
         uni.append(i)
-    
     else:
         dup.append(i)
-        ind = l.index(i)
-
     
 print(uni)
 print(dup)
-print(ind)
