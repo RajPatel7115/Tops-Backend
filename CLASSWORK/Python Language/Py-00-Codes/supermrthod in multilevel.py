@@ -4,10 +4,10 @@ class Myclass:
 
 class Myclass2():
     def fun1(self):
-        super().fun1()
+        # super().fun1()
         print("Hello2")
 
-class Myclass3(Myclass2,Myclass):
+class Myclass3(Myclass,Myclass2):
     def fun1(self):
         super().fun1()
         print("Hello2")
