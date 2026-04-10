@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank App</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+        .box {
+            background: #1e293b;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            border-radius: 10px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 8px;
+            width: 90%;
+        }
+        button {
+            background: #38bdf8;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🏦 Simple Bank</h1>
+
+<div class="box" id="signupBox">
+    <h3>Signup</h3>
+    <input id="name" placeholder="Name">
+    <input id="pin" placeholder="PIN">
+    <input id="balance" placeholder="Initial Balance">
+    <button onclick="signup()">Create Account</button>
+</div>
+
+<div class="box">
+    <h3>Login</h3>
+    <input id="loginAcc" placeholder="Account No">
+    <input id="loginPin" placeholder="PIN">
+    <button onclick="login()">Login</button>
+</div>
+
+<div class="box" id="dashboard" style="display:none;">
+    <h3>Dashboard</h3>
+    <p id="userInfo"></p>
+
+    <input id="amount" placeholder="Amount">
+    <button onclick="deposit()">Deposit</button>
+    <button onclick="withdraw()">Withdraw</button>
+
+    <input id="toAcc" placeholder="Receiver Acc">
+    <button onclick="transfer()">Transfer</button>
+
+    <button onclick="showHistory()">History</button>
+    <button onclick="logout()">Logout</button>
+
+    <p id="history"></p>
+</div>
+
+<script>
+let accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+let currentUser = null;
+
+function save() {
+    localStorage.setItem("accounts", JSON.stringify(accounts));
+}
+
+function signup() {
+    let name = document.getElementById("name").value;
+    let pin = document.getElementById("pin").value;
+    let balance = parseFloat(document.getElementById("balance").value);
+
+    let acc = Math.floor(10000 + Math.random() * 90000).toString();
+
+    accounts[acc] = {
+        name, pin, balance,
+        transactions: []
+    };
+
+    save();
+    alert("Account Created: " + acc);
+}
+
+function login() {
+    let acc = document.getElementById("loginAcc").value;
+    let pin = document.getElementById("loginPin").value;
+
+    if (accounts[acc] && accounts[acc].pin === pin) {
+        currentUser = acc;
+        document.getElementById("dashboard").style.display = "block";
+        updateUI();
+    } else {
+        alert("Invalid login");
+    }
+}
+
+function updateUI() {
+    let user = accounts[currentUser];
+    document.getElementById("userInfo").innerText =
+        user.name + " | Balance: ₹" + user.balance;
+}
+
+function deposit() {
+    let amt = parseFloat(document.getElementById("amount").value);
+    accounts[currentUser].balance += amt;
+    accounts[currentUser].transactions.push("Deposited ₹" + amt);
+    save();
+    updateUI();
+}
+
+function withdraw() {
+    let amt = parseFloat(document.getElementById("amount").value);
+    if (accounts[currentUser].balance >= amt) {
+        accounts[currentUser].balance -= amt;
+        accounts[currentUser].transactions.push("Withdrew ₹" + amt);
+        save();
+        updateUI();
+    } else {
+        alert("Insufficient balance");
+    }
+}
+
+function transfer() {
+    let to = document.getElementById("toAcc").value;
+    let amt = parseFloat(document.getElementById("amount").value);
+
+    if (accounts[to] && accounts[currentUser].balance >= amt) {
+        accounts[currentUser].balance -= amt;
+        accounts[to].balance += amt;
+
+        accounts[currentUser].transactions.push("Sent ₹" + amt);
+        accounts[to].transactions.push("Received ₹" + amt);
+
+        save();
+        updateUI();
+    } else {
+        alert("Transfer failed");
+    }
+}
+
+function showHistory() {
+    let h = accounts[currentUser].transactions.join("<br>");
+    document.getElementById("history").innerHTML = h;
+}
+
+function logout() {
+    currentUser = null;
+    document.getElementById("dashboard").style.display = "none";
+}
+</script>
+
+</body>
+</html>
