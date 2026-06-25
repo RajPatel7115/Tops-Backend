@@ -1,0 +1,77 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Home -->
+<div class="home" style="height: 400px;">
+    <div class="home_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/about_background.jpg' %}"></div>
+    <div class="home_content">
+        <div class="home_title">Car Rentals</div>
+    </div>
+</div>
+
+<!-- Offers -->
+<div class="offers">
+    <div class="container">
+        <div class="row">
+            <div class="col text-center">
+                <h2 class="section_title">Available Cars for Rent</h2>
+            </div>
+        </div>
+        
+        <div class="row offers_items mt-5">
+            {% if cars %}
+                {% for car in cars %}
+                <!-- Offers Item -->
+                <div class="col-lg-6 offers_col mb-4">
+                    <div class="offers_item rating_4">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="offers_image_container">
+                                    <div class="offers_image_background" style="background-image:url({% if car.car_image %}{{ car.car_image.url }}{% else %}{% static 'images/offer_1.jpg' %}{% endif %})"></div>
+                                    <div class="offer_name"><a href="{% url 'car_details' car.pk %}">{{ car.brand }}</a></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="offers_content">
+                                    <div class="offers_price">₹{{ car.price_per_day }}<span>per day</span></div>
+                                    <div class="rating_r rating_r_4 offers_rating" data-rating="4">
+                                        <i></i><i></i><i></i><i></i><i></i>
+                                    </div>
+                                    <p class="offers_text">{{ car.car_name }} ({{ car.model_year }})</p>
+                                    <div class="offers_icons" style="margin-top: 15px;">
+                                        <ul class="offers_icons_list" style="display: flex; gap: 20px; padding: 0; list-style: none; margin-bottom: 20px;">
+                                            <li class="offers_icons_item" title="Seats" style="font-size: 14px; color: #717171;"><i class="fa fa-users" style="color: #fa9e1b; margin-right: 5px;"></i> {{ car.seats }} Seats</li>
+                                            <li class="offers_icons_item" title="Transmission" style="font-size: 14px; color: #717171;"><i class="fa fa-cogs" style="color: #fa9e1b; margin-right: 5px;"></i> {{ car.transmission }}</li>
+                                            <li class="offers_icons_item" title="Fuel" style="font-size: 14px; color: #717171;"><i class="fa fa-tint" style="color: #fa9e1b; margin-right: 5px;"></i> {{ car.fuel_type }}</li>
+                                        </ul>
+                                    </div>
+                                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                                        <div class="button book_button" style="margin-top: 0; display: inline-block; vertical-align: middle;"><a href="{% url 'car_details' car.pk %}">View Details<span></span><span></span><span></span></a></div>
+                                        {% if app_user and app_user.usertype == 'agency' %}
+                                        <div class="button book_button" style="margin-top: 0; display: inline-block; vertical-align: middle; background: #2d2c2c;"><a href="{% url 'edit_car' car.pk %}" style="background: #2d2c2c;">Edit Car<span></span><span></span><span></span></a></div>
+                                        {% endif %}
+                                        {% if app_user and app_user.usertype == 'customer' %}
+                                            {% if car.pk in wishlist_car_ids %}
+                                            <a href="{% url 'delete_from_wishlist' car.pk %}" style="font-size: 24px; color: #ff6a00; margin-left: 10px; transition: transform 0.2s;" title="Remove from Wishlist" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fa fa-heart"></i></a>
+                                            {% else %}
+                                            <a href="{% url 'add_to_wishlist' car.pk %}" style="font-size: 24px; color: #ccc; margin-left: 10px; transition: transform 0.2s;" title="Add to Wishlist" onmouseover="this.style.transform='scale(1.2)'; this.style.color='#ff6a00'" onmouseout="this.style.transform='scale(1)'; this.style.color='#ccc'"><i class="fa fa-heart-o"></i></a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p style="font-size: 20px; color: #999;">No cars available right now. Please check back later!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

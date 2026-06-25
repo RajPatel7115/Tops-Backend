@@ -1,0 +1,234 @@
+{% extends "header.html" %}
+{% load static %}
+{% block content %}
+
+<!-- Home Banner -->
+<div class="home" style="height: 350px;">
+    <div class="home_background parallax-window" data-parallax="scroll" data-image-src="{% static 'images/contact_background.jpg' %}"></div>
+    <div class="home_content">
+        <div class="home_title">edit vehicle</div>
+    </div>
+</div>
+
+<!-- Edit Car Form Section -->
+<div class="contact_form_section" style="padding-top: 60px; padding-bottom: 90px; background-color: #f8f9fa;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="contact_form_container" style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0px 10px 30px rgba(0,0,0,0.08);">
+                    <div class="contact_title text-center" style="margin-bottom: 40px; color: #2d2c2c; font-weight: 700;">Update Vehicle Information</div>
+                    
+                    {% if error_msg %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Error:</strong> {{ error_msg }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                    
+                    {% if success_msg %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success:</strong> {{ success_msg }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endif %}
+
+                    <form action="{% url 'edit_car' car.pk %}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Section 1: Basic Information -->
+                        <h4 style="color: #fa9e1b; font-weight: 700; margin-bottom: 20px; border-bottom: 2px solid #f2f2f2; padding-bottom: 8px;">1. Basic Details</h4>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="car_name" style="font-weight: 600; color: #555;">Vehicle / Model Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="car_name" name="car_name" required value="{{ car.car_name }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="brand" style="font-weight: 600; color: #555;">Brand / Manufacturer <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="brand" name="brand" required value="{{ car.brand }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="model_year" style="font-weight: 600; color: #555;">Model Year <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="model_year" name="model_year" required min="1990" max="2030" value="{{ car.model_year }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="plate_number" style="font-weight: 600; color: #555;">Plate / Registration Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="plate_number" name="plate_number" required value="{{ car.plate_number }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="vehicle_type" style="font-weight: 600; color: #555;">Vehicle Type <span class="text-danger">*</span></label>
+                                <select class="form-control" id="vehicle_type" name="vehicle_type" required style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                                    <option value="4-wheeler" {% if car.vehicle_type == "4-wheeler" %}selected{% endif %}>4-Wheeler (Car / SUV)</option>
+                                    <option value="2-wheeler" {% if car.vehicle_type == "2-wheeler" %}selected{% endif %}>2-Wheeler (Bike / Scooter)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Specifications & Metrics -->
+                        <h4 style="color: #fa9e1b; font-weight: 700; margin-top: 30px; margin-bottom: 20px; border-bottom: 2px solid #f2f2f2; padding-bottom: 8px;">2. Specifications & Metrics</h4>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="color" style="font-weight: 600; color: #555;">Color</label>
+                                <input type="text" class="form-control" id="color" name="color" value="{{ car.color|default:'' }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="mileage" style="font-weight: 600; color: #555;">Mileage (km/l or km/charge)</label>
+                                <input type="number" class="form-control" id="mileage" name="mileage" value="{{ car.mileage|default:'' }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="condition" style="font-weight: 600; color: #555;">Vehicle Condition</label>
+                                <input type="text" class="form-control" id="condition" name="condition" value="{{ car.condition|default:'' }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="tyre_condition" style="font-weight: 600; color: #555;">Tyre Condition <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="tyre_condition" name="tyre_condition" required value="{{ car.tyre_condition }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="seats" style="font-weight: 600; color: #555;">Seats / Capacity <span class="text-danger">*</span></label>
+                                <select class="form-control" id="seats" name="seats" required style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                                    <option value="2" {% if car.seats == 2 %}selected{% endif %}>2 Seats (Ideal for 2-Wheelers)</option>
+                                    <option value="4" {% if car.seats == 4 %}selected{% endif %}>4 Seats</option>
+                                    <option value="5" {% if car.seats == 5 %}selected{% endif %}>5 Seats</option>
+                                    <option value="7" {% if car.seats == 7 %}selected{% endif %}>7 Seats</option>
+                                    <option value="9" {% if car.seats == 9 %}selected{% endif %}>9 Seats</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="fuel_type" style="font-weight: 600; color: #555;">Fuel Type <span class="text-danger">*</span></label>
+                                <select class="form-control" id="fuel_type" name="fuel_type" required style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                                    <option value="Petrol" {% if car.fuel_type == "Petrol" %}selected{% endif %}>Petrol</option>
+                                    <option value="Diesel" {% if car.fuel_type == "Diesel" %}selected{% endif %}>Diesel</option>
+                                    <option value="CNG" {% if car.fuel_type == "CNG" %}selected{% endif %}>CNG</option>
+                                    <option value="Electric" {% if car.fuel_type == "Electric" %}selected{% endif %}>Electric</option>
+                                    <option value="Hybrid" {% if car.fuel_type == "Hybrid" %}selected{% endif %}>Hybrid</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="transmission" style="font-weight: 600; color: #555;">Transmission <span class="text-danger">*</span></label>
+                                <select class="form-control" id="transmission" name="transmission" required style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                                    <option value="Manual" {% if car.transmission == "Manual" %}selected{% endif %}>Manual</option>
+                                    <option value="Automatic" {% if car.transmission == "Automatic" %}selected{% endif %}>Automatic</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Pricing & Media -->
+                        <h4 style="color: #fa9e1b; font-weight: 700; margin-top: 30px; margin-bottom: 20px; border-bottom: 2px solid #f2f2f2; padding-bottom: 8px;">3. Pricing & Media</h4>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="price_per_hour" style="font-weight: 600; color: #555;">Price Per Hour (₹) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="price_per_hour" name="price_per_hour" required min="1" value="{{ car.price_per_hour }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="price_per_day" style="font-weight: 600; color: #555;">Price Per Day (₹) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="price_per_day" name="price_per_day" required min="1" value="{{ car.price_per_day }}" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="car_image" style="font-weight: 600; color: #555;">Vehicle Image (Upload to change)</label>
+                                <input type="file" class="form-control-file" id="car_image" name="car_image" accept="image/*" style="padding-top: 6px;">
+                            </div>
+                        </div>
+
+                        {% if car.car_image %}
+                        <div class="form-row mb-4">
+                            <div class="col-md-4">
+                                <div style="font-weight: 600; color: #555; margin-bottom: 8px;">Current Image:</div>
+                                <img src="{{ car.car_image.url }}" alt="{{ car.car_name }}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Section 4: Features & Safety -->
+                        <h4 style="color: #fa9e1b; font-weight: 700; margin-top: 30px; margin-bottom: 20px; border-bottom: 2px solid #f2f2f2; padding-bottom: 8px;">4. Features & Safety</h4>
+                        
+                        <div class="form-row align-items-center mb-3">
+                            <div class="form-group col-md-4">
+                                <label for="airbags_count" style="font-weight: 600; color: #555;">Airbags Count</label>
+                                <input type="number" class="form-control" id="airbags_count" name="airbags_count" value="{{ car.airbags_count }}" min="0" max="10" style="height: 45px; border-radius: 6px; border: 1px solid #ced4da;">
+                            </div>
+                        </div>
+
+                        <div class="row px-2">
+                            <div class="form-group col-sm-6 col-md-4">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="has_ac" name="has_ac" value="True" {% if car.has_ac %}checked{% endif %}>
+                                    <label class="custom-control-label" for="has_ac" style="font-weight: 500; color: #555; cursor: pointer;">Air Conditioning (AC)</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-md-4">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="has_airbags" name="has_airbags" value="True" {% if car.has_airbags %}checked{% endif %}>
+                                    <label class="custom-control-label" for="has_airbags" style="font-weight: 500; color: #555; cursor: pointer;">Airbags Present</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-md-4">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="has_abs" name="has_abs" value="True" {% if car.has_abs %}checked{% endif %}>
+                                    <label class="custom-control-label" for="has_abs" style="font-weight: 500; color: #555; cursor: pointer;">ABS Brakes</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-md-4">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="has_gps" name="has_gps" value="True" {% if car.has_gps %}checked{% endif %}>
+                                    <label class="custom-control-label" for="has_gps" style="font-weight: 500; color: #555; cursor: pointer;">GPS Navigation</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-md-4">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="has_music_system" name="has_music_system" value="True" {% if car.has_music_system %}checked{% endif %}>
+                                    <label class="custom-control-label" for="has_music_system" style="font-weight: 500; color: #555; cursor: pointer;">Music System</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-6 col-md-4">
+                                <div class="custom-control custom-checkbox custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="has_reverse_camera" name="has_reverse_camera" value="True" {% if car.has_reverse_camera %}checked{% endif %}>
+                                    <label class="custom-control-label" for="has_reverse_camera" style="font-weight: 500; color: #555; cursor: pointer;">Reverse Camera</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons Row -->
+                        <div class="text-center mt-5" style="display: flex; justify-content: center; gap: 20px;">
+                            <button type="submit" class="button trans_200" style="background: linear-gradient(to right, #fa9e1b, #ff6a00); color: white; border: none; font-size: 16px; font-weight: 700; border-radius: 25px; padding: 12px 40px; cursor: pointer; box-shadow: 0px 4px 15px rgba(250, 158, 27, 0.3);">
+                                Save Changes<span></span><span></span><span></span>
+                            </button>
+                            <a href="{% url 'car_rentals' %}" class="button trans_200" style="background: #2d2c2c; color: white; border: none; font-size: 16px; font-weight: 700; border-radius: 25px; padding: 12px 40px; text-decoration: none; display: flex; align-items: center; justify-content: center; box-shadow: 0px 4px 15px rgba(0,0,0,0.15);">
+                                Cancel<span></span><span></span><span></span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Bootstrap custom validation script
+(function() {
+  'use strict';
+  window.addEventListener('load', function() {
+    var forms = document.getElementsByClassName('needs-validation');
+    var validation = Array.prototype.filter.call(forms, function(forms) {
+      forms.addEventListener('submit', function(event) {
+        if (forms.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        forms.classList.add('was-validated');
+      }, false);
+    });
+  }, false);
+})();
+</script>
+
+{% endblock %}
