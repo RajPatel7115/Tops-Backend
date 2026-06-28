@@ -76,3 +76,11 @@ class Wishlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
+    tprice = models.PositiveIntegerField()
+    cprice = models.PositiveIntegerField()
+    payment = models.BooleanField(default=False)

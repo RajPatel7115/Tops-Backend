@@ -14,6 +14,28 @@
 <link rel="stylesheet" type="text/css" href="{% static 'plugins/OwlCarousel2-2.2.1/animate.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'styles/main_styles.css' %}">
 <link rel="stylesheet" type="text/css" href="{% static 'styles/responsive.css' %}">
+<style>
+	/* Make navigation bar elements stay in a single line */
+	.main_nav_container {
+		margin-right: 40px !important;
+	}
+	.main_nav_list {
+		display: flex !important;
+		align-items: center !important;
+		flex-wrap: nowrap !important;
+	}
+	.main_nav_item {
+		margin-right: 20px !important;
+	}
+	.main_nav_item:last-child {
+		margin-right: 0px !important;
+	}
+	/* Ensure correct alignment for profile pic list item */
+	.main_nav_item a {
+		display: flex !important;
+		align-items: center !important;
+	}
+</style>
 </head>
 
 <body>
@@ -69,6 +91,7 @@
 								{% endif %}
 								{% if app_user and app_user.usertype == 'customer' %}
 								<li class="main_nav_item"><a href="{% url 'wishlist' %}">wishlist ({{ request.session.wishlist|default:0 }})</a></li>
+								<li class="main_nav_item"><a href="{% url 'scart' %}">cart ({{ request.session.cart_count|default:0 }})</a></li>
 								{% endif %}
 								<li class="main_nav_item"><a href="#">offers</a></li>
 								<li class="main_nav_item"><a href="#">news</a></li>

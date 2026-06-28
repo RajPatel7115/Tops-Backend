@@ -420,6 +420,90 @@ def delete_from_wishlist(request, pk):
     if referer:
         return redirect(referer)
     return redirect('wishlist')
+
+def scart(request):
+    email = request.session.get('email')
+    if not email:
+        return redirect('login')
+        
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return redirect('login')
+        
+    cart = Cart.objects.filter(user=user, payment=False)
+    
+    # Calculate totals
+    subtotal = sum(item.tprice for item in cart)
+    gst = int(subtotal * 0.18)
+    grand_total = subtotal + gst
+    
+    request.session['cart_count'] = len(cart)
+    return render(request, 'cart.html', {
+        'cart': cart,
+        'subtotal': subtotal,
+        'gst': gst,
+        'grand_total': grand_total
+    })
+
+def add_to_cart(request, pk):
+    email = request.session.get('email')
+    if not email:
+        return redirect('login')
+        
+    try:
+        user = User.objects.get(email=email)
+        car = Car.objects.get(pk=pk)
+    except (User.DoesNotExist, Car.DoesNotExist):
+        return redirect('index')
+        
+    # Check if this car is already in the customer's cart unpaid
+    cart_item = Cart.objects.filter(user=user, car=car, payment=False).first()
+    
+    from datetime import datetime
+    days = 1
+    if request.method == "POST":
+        pickup = request.POST.get('pickup_date')
+        drop = request.POST.get('return_date')
+        if pickup and drop:
+            try:
+                d1 = datetime.strptime(pickup, '%Y-%m-%d')
+                d2 = datetime.strptime(drop, '%Y-%m-%d')
+                days = (d2 - d1).days
+                if days < 1:
+                    days = 1
+            except ValueError:
+                pass
+
+    if cart_item:
+        cart_item.tprice = car.price_per_day * days
+        cart_item.save()
+    else:
+        Cart.objects.create(
+            user=user,
+            car=car,
+            cprice=car.price_per_day,
+            tprice=car.price_per_day * days,
+            payment=False
+        )
+        
+    request.session['cart_count'] = Cart.objects.filter(user=user, payment=False).count()
+    return redirect('scart')
+
+def dcart(request, pk):
+    email = request.session.get('email')
+    if not email:
+        return redirect('login')
+        
+    try:
+        user = User.objects.get(email=email)
+        car = Car.objects.get(pk=pk)
+        Cart.objects.filter(user=user, car=car, payment=False).delete()
+    except (User.DoesNotExist, Car.DoesNotExist):
+        pass
+        
+    request.session['cart_count'] = Cart.objects.filter(user=user, payment=False).count()
+    return redirect('scart')
     
 
 

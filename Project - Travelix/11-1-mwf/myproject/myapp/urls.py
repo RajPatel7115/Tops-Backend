@@ -12,6 +12,9 @@ urlpatterns = [
       path('update-profile/', views.update_profile, name='update_profile'),
       path('add-car/', views.add_car, name='add_car'),
       path('edit-car/<int:pk>/', views.edit_car, name='edit_car'),
+      path('add-to-cart/<int:pk>/',views.add_to_cart, name='add_to_cart'),
+      path('cart/', views.scart, name='scart'),
+      path('delete-from-cart/<int:pk>/', views.dcart, name='dcart'),
       
       # User URLs
       path('car-rentals/', views.car_rentals, name='car_rentals'),
